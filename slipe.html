@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no">
+	<title>滑动插件</title>
+	<script type="text/javascript" src="slipe.js"></script>
+	<style type="text/css" media="screen">
+		*{
+			list-style: none;margin:0;padding:0;
+		}
+		#parent{
+			height: 400px;width: 350px;
+			border:1px solid #000;
+			position: relative;overflow: hidden;
+			margin:20px auto;
+		}
+		ul{
+			height: 100%;width:100%;
+			position: absolute;
+		}
+		ul>li{
+			background-color: #abcdef;
+			float: left
+		}
+		li:first-child{
+			background-color: red;
+		}
+		li:last-child{
+			background-color: green;
+		}
+		.slipeEventJs{
+			transition: left 200ms;
+			-moz-transition: left 200ms;	
+			-webkit-transition: left 200ms;	
+			-o-transition: left 200ms;
+			transition: top 200ms;
+			-moz-transition: top 200ms;	
+			-webkit-transition: top 200ms;	
+			-o-transition: top 200ms;
+		}
+	</style>
+</head>
+<body>
+	<div id="parent">
+		<ul>
+			<li>
+				<p>111</p>
+			</li>
+			<li>
+				<p>222</p>
+			</li>
+			<li>
+				<p>333</p>
+			</li>
+		</ul>
+	</div>
+</body>
+<script type="text/javascript">
+	var  slipe = new slipeEvent('#parent',".slipeEventJs",false,30)
+</script>
+</html>
