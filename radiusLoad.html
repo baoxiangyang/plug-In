@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title></title>
+	<link rel="stylesheet" href="">
+	<style type="text/css" media="screen">
+			.wrap{
+				width: 100px;height: 100px;
+				background-color: red;
+				position: relative;
+				border-radius: 50%;
+			}
+			.wrapBefore,.wrapAfter,.spiner{
+				position: absolute;
+				width:50%;
+				height: 100%;
+			}
+			.wrapBefore{				
+				content: '';
+				background-color: pink;
+				border-top-left-radius: 100% 50%;
+				border-bottom-left-radius: 100% 50%;
+			}
+			.wrapAfter{				
+				content: '';
+				background-color: red;
+				border-top-right-radius: 100% 50%;
+				border-bottom-right-radius: 100% 50%;
+				right: 0;
+			}
+			.spiner{
+				right:0;
+				background-color: pink;
+				
+			}	
+			.radiusRight{
+				border-top-right-radius: 100% 50%;
+				border-bottom-right-radius: 100% 50%;
+				transform-origin: left center;
+				right: 0;
+			}
+			.radiusLeft{
+				border-top-left-radius: 100% 50%;
+				border-bottom-left-radius: 100% 50%;
+				transform-origin: right center;
+				left:0;
+			}
+	</style>
+</head>
+<body>
+	<div class="wrap">
+		<div class="wrapBefore"></div>
+		<div class="spiner"></div>
+		<div class="wrapAfter"></div>
+	</div>
+</body>
+<script type="text/javascript">
+	/*
+	*dom 圆形load的更节点
+	fgColor 前景色 默认为pink
+	bgColor 背景色 默认为red
+	orient  ture 逆时针旋转，flase：顺，默认false 
+	*/
+	function circleLoad(dom,fgColor,bgColor,orient){
+		this.dom  = dom;
+		this.fgColor = fgColor || 'pink';
+		this.bgColor = bgColor || 'red';
+		this.orient = orient || false;
+		this._setDomStyle()
+	}
+	circleLoad.prototype = {
+		_setDomStyle:function(){
+			var mainDom = this.dom;
+			this._isOpcity = true;
+			this._mainAfter = mainDom.querySelector('.wrapAfter');
+			this._mainBefore = mainDom.querySelector('.wrapBefore');
+			this._rotateDom = mainDom.querySelector('.spiner');
+			mainDom.style.backgroundColor = this.bgColor;
+			this._rotateDom.style.backgroundColor = this.fgColor;
+			if(this.orient){
+				this._rotateDom.classList.add('radiusLeft');
+				this._rotateDom.classList.remove('radiusRight');
+				this._mainAfter.style.opacity = 1;
+				this._mainBefore.style.opacity = 0;
+				this._mainBefore.style.zIndex = 5;
+				this._mainAfter.style.backgroundColor = this.fgColor;
+				this._mainBefore.style.backgroundColor = this.bgColor;
+			}else{
+				this._mainAfter.style.backgroundColor = this.bgColor;
+				this._mainBefore.style.backgroundColor = this.fgColor;
+				this._rotateDom.classList.remove('radiusLeft');
+				this._rotateDom.classList.add('radiusRight');
+				this._mainAfter.style.opacity = 0;
+				this._mainBefore.style.opacity = 1;
+				this._mainAfter.style.zIndex = 5;
+			}
+		},
+		rotate:function(num){
+			if(num >= 180 && this._isOpcity){
+				if(this.orient){
+					this._mainBefore.style.opacity = 1;
+					this._mainAfter.style.opacity = 0;
+				}else{
+					this._mainAfter.style.opacity = 1;
+					this._mainBefore.style.opacity = 0;
+				}
+				this._isOpcity = false;
+			}
+			var number = this.orient ? (-num) :num;
+			this._rotateDom.style.transform = "rotate("+number+"deg)"
+		}
+	}
+</script>
+<script type="text/javascript">
+	var rote = new circleLoad(document.querySelector('.wrap'));
+	rote.rotate(45)
+</script>
+</html>
