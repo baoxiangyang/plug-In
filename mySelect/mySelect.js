@@ -89,20 +89,11 @@
 					if (scrollbars.css('display') == 'none') {
 						return false;
 					}
-					if (event.originalEvent.wheelDelta > 0) {
-						if (scrollbars.position().top <= 0) {
-							scrollbars.css('top', 0);
-							return false;
-						}
+					if (wheel < 0) {
 						if (num < 0) {
 							num = 0;
 						}
 					} else {
-						if (scrollbars.position().top >= downHight) {
-							scrollbars.css('top', downHight);
-							return false;
-						}
-						
 						if (num > downHight) {
 							num = downHight;
 						}
