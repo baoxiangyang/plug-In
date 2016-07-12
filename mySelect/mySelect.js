@@ -103,37 +103,30 @@
 					return false;
 				});
 				//下拉条鼠标按下
-				var downTop = 0; //记录鼠标按下时Y的距离
 				$(this).on('mousedown', '.pull-down', function (event) {
 					if ($(this).css('display') == 'none') {
 						return false;
 					}
-					var self = $(this).parents('.mySelect');
-					downTop = event.clientY - $(this).position().top;
-					keyDown = true;
+					var self = $(this).parents('.mySelect'),
+						downHight = self.find('ul').height() - self.find('.pull-down').height(),
+						downTop = event.clientY - $(this).position().top;
 					//下拉条鼠标移动
 					$(document).on('mousemove', function (event) {
-						if (keyDown) {
 							var num = event.clientY - downTop;
-							downHight = self.find('ul').height() - self.find('.pull-down').height();
 							if (num <= 0) {
 								num = 0
-							}
-							;
+							};
 							if (num >= downHight) {
 								num = downHight;
 							}
 							//$(this).find('.pull-down').css('top', num);
-							setDown($(this).find('.mySelect'), num)
-						}
+							setDown(self, num);
 						event.stopPropagation();
 						return false;
 					});
 					//下拉条鼠标抬起
 					$(document).on('mouseup', function (event) {
-						keyDown = false;
 						$(this).off('mousemove mouseup');
-						downTop = 0;
 						event.stopPropagation();
 						return false;
 					});
