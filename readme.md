@@ -3,5 +3,6 @@ slipe 移动端滑动插件(原生js)。用法和参数请看slipe.js、slipe.ht
 dropUpload pc端文件拖拽上传demo<br/>
 rediusLoad.html 圆形加载插件
 getMedia.html 获取摄像头，麦克风
-excel.js 数据生成excel。
-mySelect 是一个jq的自定义select组件
+excel.js 数据生成excel。\r\n
+mySelect 是一个jq的自定义select组件 \r\n
+myScrollBar 自定义滚动条工具 简单实用
