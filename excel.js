@@ -10,6 +10,7 @@ conf.rows = [
 	['aaa','bbb','ccc'],['sdf','sdf','33fsf3']
 ]
 var result = excelPort.execute(conf);
+console.log(result)
 var filePath = './test.xlsx';
 fs.writeFile(filePath, result, 'binary',function(err){
     if(err){

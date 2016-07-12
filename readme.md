@@ -4,3 +4,4 @@ dropUpload pc端文件拖拽上传demo<br/>
 rediusLoad.html 圆形加载插件
 getMedia.html 获取摄像头，麦克风
 excel.js 数据生成excel。
+mySelect 是一个jq的自定义select组件
