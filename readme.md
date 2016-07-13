@@ -6,3 +6,4 @@ getMedia.html 获取摄像头，麦克风<br/>
 excel.js 数据生成excel。<br/>
 mySelect 是一个jq的自定义select组件 <br/>
 myScrollBar 自定义滚动条工具 简单实用 <br/>
+炫酷loading 一个不错的加载中动画
