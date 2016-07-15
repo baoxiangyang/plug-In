@@ -120,7 +120,7 @@
 			visibleHeight = 0;
 			if(height){
 				$(this).innerHeight(height);
-				visibleHeight = height;
+				visibleHeight = $(this).innerHeight(height);
 			}else{
 				visibleHeight = $(this).height();
 			}
