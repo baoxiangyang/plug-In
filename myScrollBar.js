@@ -7,7 +7,7 @@
 			width：'xxpx' 滚动条width，可不填，默认5px,
 			direction: 'right' 滚动条显示位置，可不填，默认right。选项值 left，right
 		})
-		$('.xxx').myScrollBar('update') //当内容改变时，更新滚动条高度和位置方法
+		$('.xxx').myScrollBar('update' [,height]) //当内容改变时，更新滚动条高度和位置方法，height存在时同时更新节点可视区高度
 	*/
 	var methods = {
 		init: function(obj){
@@ -21,8 +21,9 @@
 			showHeight = obj.showHeight;
 			$(this).each(function(){
 				$(this).css({position: 'relative', height: showHeight, overflow: 'hidden'}).wrapInner('<div class="_myScroll" style="position:absolute;" />');
-				$(this).append('<div class="_scrollbar" style="cursor:pointer;position:absolute;top:0;'+obj.direction+':0;background-color:'+obj.color+';width:'+ obj.width +';"></div>');
-				_setHeight.call($(this));
+				$(this).append('<div class="_scrollbar" style="cursor:pointer;position:absolute;top:0;z-index:5;'+obj.direction+':0;background-color:'+obj.color+';width:'+ obj.width +';"></div>');
+				$(this).append('<div class="_scrolltrack" style="cursor:pointer;position:absolute;top:0;z-index:3;opacity:0;'+obj.direction+':0;background-color:'+obj.color+';width:'+ obj.width +';height:'+ showHeight +';"></div>')
+				_setHeight.call($(this));	
 				$(this).on('mousewheel DOMMouseScroll', function(event){
 					var _scrollbar = $(this).find('._scrollbar'),wheel = 0,
 						scrollHeight = $(this).height() - _scrollbar.height();
@@ -47,10 +48,40 @@
 					event.stopPropagation();
 					return false;
 				})
+				$(this).find('._scrolltrack').hover(function(){
+					$(this).css('opacity','0.7');
+				},function(){
+					$(this).css('opacity','0');
+				})
+				$(this).find('._scrollbar').hover(function(){
+					$(this).nextAll('._scrolltrack').css('opacity','0.7');
+				},function(event){
+					if(event.which){
+						return false;
+					}
+					$(this).nextAll('._scrolltrack').css('opacity','0');
+				})
+				$(this).find('._scrolltrack').click(function(event) {
+					var _scrollbar = $(this).prevAll('._scrollbar'),
+							_myScroll = $(this).prevAll('._myScroll'),
+							nubmer = event.offsetY,
+							scrollHeight = $(this).height();
+							if(nubmer > scrollHeight - _scrollbar.height()/2){
+									nubmer = scrollHeight - _scrollbar.height()/2;
+							}
+							if(nubmer <  _scrollbar.height()/2){
+								nubmer = _scrollbar.height()/2;
+							}
+							_scrollbar.css('top',nubmer -  _scrollbar.height()/2);
+
+							_myScroll.css('top', - (nubmer -  _scrollbar.height()/2)/(scrollHeight -  _scrollbar.height()) * (_myScroll.height()  - scrollHeight));
+				});
 				$(this).on('mousedown' ,'._scrollbar', function(event){
 					if ($(this).css('display') == 'none') {
 						return false;
 					}
+					$(this).nextAll('._scrolltrack').css('opacity','0.7');
+
 					var downTop = event.clientY - $(this).position().top, parentDiv = $(this).parent(),
 						scrollHeight = parentDiv.height() -$(this).height(), self = $(this);
 					$(document).on('mousemove', function(event){
@@ -69,6 +100,7 @@
 					})
 					$(document).on('mouseup', function (event) {
 						$(this).off('mousemove mouseup');
+						self.nextAll('._scrolltrack').css('opacity','0');
 						event.stopPropagation();
 						return false;
 					});
@@ -77,19 +109,27 @@
 				})
 			});
 		},
-		update:function(){
-			_setHeight.call($(this));
+		update:function(height){
+			_setHeight.call($(this), height);
 		}
 	}
-	function _setHeight(){
+	function _setHeight(height){
 		var absDom = $(this).children('._myScroll'), 
 			absDomHeight = absDom.outerHeight(),
 			scrollbar = $(this).children('._scrollbar'),
-			visibleHeight = $(this).height();
+			visibleHeight = 0;
+			if(height){
+				$(this).innerHeight(height);
+				visibleHeight = height;
+			}else{
+				visibleHeight = $(this).height();
+			}
 		if(absDomHeight > visibleHeight){
 			scrollbar.css('display','block');
+			$(this).find('._scrolltrack').css('display','block');
 		}else{
 			scrollbar.css({display:'none', top:'0'});
+			$(this).find('._scrolltrack').css('display','none');
 			return false;
 		}
 		var scrollbarHeight = visibleHeight * visibleHeight / absDomHeight;
