@@ -219,6 +219,7 @@
 				maxWidth = $(this).width();
 			}
 		});
+		maxWidth += 1;
 		$(this).find('.mySelect_listDown').css('display', 'none');
 		var mySelect_showWidth = mySelect_showDom.width();
 		if (mySelect_showWidth > maxWidth) {
