@@ -5,7 +5,8 @@
 			showHeight：'xxpx' 显示高度必填
 			color: 'xx' 滚动条颜色,可不填 默认#B3B3B3，
 			width：'xxpx' 滚动条width，可不填，默认5px,
-			direction: 'right' 滚动条显示位置，可不填，默认right。选项值 left，right
+			direction: 'right' 滚动条显示位置，可不填，默认right。选项值 left，right,
+			position: 'absolute'
 		})
 		$('.xxx').myScrollBar('update' [,height]) //当内容改变时，更新滚动条高度和位置方法，height存在时同时更新节点可视区高度
 	*/
@@ -18,19 +19,23 @@
 			obj.width = obj.width || '5px';
 			obj.color = obj.color || '#B3B3B3';
 			obj.direction = obj.direction || 'right';
+			obj.position = obj.position || 'absolute';
 			showHeight = obj.showHeight;
 			$(this).each(function(){
-				$(this).css({position: 'relative', height: showHeight, overflow: 'hidden'}).wrapInner('<div class="_myScroll" style="position:absolute;" />');
+				$(this).css({height: showHeight, overflow: 'hidden'}).wrapInner('<div class="_myScroll" style="width:100%;word-wrap:break-word;word-break:break-all;position:'+ obj.position +';" />');
 				$(this).append('<div class="_scrollbar" style="cursor:pointer;position:absolute;top:0;z-index:5;'+obj.direction+':0;background-color:'+obj.color+';width:'+ obj.width +';"></div>');
 				$(this).append('<div class="_scrolltrack" style="cursor:pointer;position:absolute;top:0;z-index:3;opacity:0;'+obj.direction+':0;background-color:'+obj.color+';width:'+ obj.width +';height:'+ showHeight +';"></div>')
 				_setHeight.call($(this));	
 				$(this).on('mousewheel DOMMouseScroll', function(event){
 					var _scrollbar = $(this).find('._scrollbar'),wheel = 0,
 						scrollHeight = $(this).height() - _scrollbar.height();
+					if(_scrollbar.css('display') == 'none'){
+						return false;
+					}
 					if (event.originalEvent.wheelDelta) {
 						wheel = -event.originalEvent.wheelDelta / 12;
 					} else {
-						wheel = event.originalEvent.detail;
+						wheel = event.originalEvent.detail ? event.originalEvent.detail : -event.deltaY * 12;
 					}
 					var nubmer = _scrollbar.position().top + wheel;
 					if(wheel < 0){
@@ -120,7 +125,7 @@
 			visibleHeight = 0;
 			if(height){
 				$(this).innerHeight(height);
-				visibleHeight = $(this).innerHeight(height);
+				visibleHeight = $(this).innerHeight();
 			}else{
 				visibleHeight = $(this).height();
 			}
