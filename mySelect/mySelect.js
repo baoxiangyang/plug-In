@@ -202,6 +202,7 @@
 				var firstLi = $(this).find('li').eq(0);
 				$(this).find('p').data('value', firstLi.data('value'));
 				$(this).find('p').text(firstLi.text());
+				$(this).find('.mySelect_list').css('top','0');
 				if(bool === true){
 					$(this).trigger("change");
 				}
