@@ -22,6 +22,9 @@
     line-height: 1.42857143;
     font-weight: normal;
     text-align: left;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 .mySelect .up, .mySelect .down{
 	display: inline-block;

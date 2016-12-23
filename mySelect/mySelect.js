@@ -1,42 +1,38 @@
 (function ($) {
 	/* 说明：
-		$('.mySelect').mySelect([num]) //初始化，num存在时，指定超过num个选项后，显示侧边栏下拉。为空时显示所有选项
+		$('.mySelect').mySelect([num，optionShow]) //初始化，num存在时，指定超过num个选项后，显示侧边栏下拉。为空时显示所有选项
+																								optionShow 显示区显示不完整时，选项去显示方式
 		$('.mySelect').mySelect(value[,str][,true]) str不存在时，获取选择值，存在时设置该选项为选中选项，true存在时 在设置选项是会触发change事件
-		$('.mySelect').mySelect('insert','<li data-value="">sdfsdf</li>') 插入选项,插入前会默认清空原有选项
+		$('.mySelect').mySelect('insert','<li value="">sdfsdf</li>') 插入选项,插入前会默认清空原有选项
 		$('.mySelect').mySelect('reset',[,true]) 重置第一个选项选中。ture存在时在重置后 会吃饭change事件
 		$('.mySelect').mySelect('getText') 获取选中项的text文本
 		禁用 在.mySelect 添加myDisabled class
 		html 结构
 		<div class="mySelect">
-			<div class="mySelect_show">
+			<div class="mySelect_show" >
 				<span class="down"> </span>
-				<p></p>
+				<p value=""></p>
 			</div>
-			<div class="mySelect_listDown">
-				<ul class="mySelect_list">
-					<li data-value="1">水电费</li>
-					<li data-value="2">水电费</li>
-					<li data-value="3">水电费水电费水电费水电费水电费</li>
-					<li data-value="4">水电费</li>
-					<li data-value="5">水电费</li>
-					<li data-value="6">水电费</li>
-					<li data-value="7">水电费</li>
-					<li data-value="8">水电费</li>		
-				</ul>
-				<div class="pull-down" style="display:none"></div>		
-			</div>
+			<ul style="display:none">
+				<div class="mySelect_list">
+					<li value="11">水电费</li> 
+					<li value="22">水电费</li>                        	
+				</div>
+			<div class="pull-down" style="display:none"></div>			
+			</ul>
 		</div>
 	*/
 	var height = 32,
 		speed = 10;//滚动速度 
 	var methods = {
-		init: function (num) { //初始函数
+		init: function (num, optionShow) { //初始函数
 			var number = num || 0;
 			$(this).each(function () {
 				if($(this).data('init') == 'true'){ //阻止多次初始
 					return false;
 				}
 				$(this).data('init', 'true');
+				$(this).data('optionShow', optionShow);
 				$(this).data('number', num || 0);
 				$(this).mySelect('reset');
 				setWidth.call($(this));
@@ -70,8 +66,8 @@
 					} else {
 						showOrHide($(this).parents('.mySelect'), event, 'hide');
 					}
-					event.stopPropagation();
-					return false;
+					// event.stopPropagation();
+					// return false;
 				});
 				//点击下拉框
 				$(this).on('click', 'li', function (event) {
@@ -85,7 +81,7 @@
 						mySelect_showDom.text($(this).text());
 						$(this).parents('.mySelect').trigger("change");
 					}
-					event.stopPropagation()
+					event.stopPropagation();
 				});
 				//下拉条滚动事件
 				$(this).on('mousewheel DOMMouseScroll', '.mySelect_listDown', function (event) {
@@ -112,7 +108,7 @@
 						}
 					}
 					setDown($(this).parents('.mySelect'), num);
-					event.stopPropagation()
+					event.stopPropagation();
 					return false;
 				});
 				//下拉条鼠标按下
@@ -127,8 +123,8 @@
 					$(document).on('mousemove', function (event) {
 							var num = event.clientY - downTop;
 							if (num <= 0) {
-								num = 0
-							};
+								num = 0;
+							}
 							if (num >= downHight) {
 								num = downHight;
 							}
@@ -145,7 +141,7 @@
 					});
 					event.stopPropagation();
 					return false;
-				})
+				});
 			});
 			return $(this);
 		},
@@ -154,7 +150,7 @@
 				var ulDom = $(this).find('.mySelect_listDown'), listDiv = $(this).find('.mySelect_list'),
 						number = $(this).data('number');
 				ulDom.removeAttr('style');
-				$(this).find('p').removeAttr('style');
+				$(this).find('p').removeAttr('style').data('value','');
 				listDiv.html(html || '');
 				$(this).mySelect('reset');
 				if (number && $(this).find('li').length > number) {
@@ -168,7 +164,7 @@
 				if(bool === true){
 					$(this).trigger("change");
 				}
-			})
+			});
 			return $(this);
 		},
 		value: function (val,bool) { //取值
@@ -176,14 +172,14 @@
 				$(this).each(function(){
 					var li = $(this).find('li[data-value=' + val + ']').eq(0);
 					if (li.length) {
-						$(this).find('.mySelect_show p').data('value', val).text(li.text())
+						$(this).find('.mySelect_show p').data('value', val).text(li.text());
 						if(bool === true){
 							$(this).trigger("change");
 						}
 					} else {
 						$.error('value option is not find');
 					}
-				})
+				});
 				return $(this);
 			} else {
 				var value = $(this).eq(0).find('p').data('value');
@@ -220,15 +216,23 @@
 				maxWidth = $(this).width();
 			}
 		});
-		maxWidth += 1;
+		maxWidth += 1; //防止宽度小数被舍弃
 		$(this).find('.mySelect_listDown').css('display', 'none');
 		var mySelect_showWidth = mySelect_showDom.width();
-		if (mySelect_showWidth > maxWidth) {
-			mySelect_showDom.width(mySelect_showWidth);
-		} else {
-			mySelect_showDom.width(maxWidth);
+		var showDomWidth = mySelect_showDom.parents('.mySelect_show').outerWidth();
+			if (mySelect_showWidth > maxWidth) {
+				mySelect_showDom.width(mySelect_showWidth);
+			} else {
+				mySelect_showDom.width(maxWidth);
+			}
+		if($(this).data('optionShow')){
+			if(mySelect_showWidth > showDomWidth || maxWidth > showDomWidth){
+				mySelect_showDom.width(showDomWidth - 48);
+			}
+			liDom.parents('.mySelect_listDown').width(maxWidth + 32);
+		}else{
+			liDom.parents('.mySelect_listDown').width(mySelect_showDom.parents('.mySelect_show').outerWidth());
 		}
-		liDom.parents('.mySelect_listDown').width(mySelect_showDom.parents('.mySelect_show').outerWidth());
 	}
 	function setPullHeight() { //设置导航条高度
 		var scrollbars = $(this).find('.pull-down'), 
@@ -277,7 +281,7 @@
 		if (!$(event.target).parents('.mySelect').length) {
 			$('.mySelect').each(function () {
 				showOrHide($(this), null, 'hide');
-			})
+			});
 		}
 	});
 	$.fn.mySelect = function (method) {
@@ -288,5 +292,5 @@
 		} else {
 			$.error('Method' + method + 'does not exist on jQuery.mySelect');
 		}
-	}
+	};
 })(jQuery);
