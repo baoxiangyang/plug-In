@@ -219,17 +219,19 @@
 		maxWidth += 1; //防止宽度小数被舍弃
 		$(this).find('.mySelect_listDown').css('display', 'none');
 		var mySelect_showWidth = mySelect_showDom.width();
-		var showDomWidth = mySelect_showDom.parents('.mySelect_show').outerWidth();
+		var showDomWidth = mySelect_showDom.parents('.mySelect_show').width();
 			if (mySelect_showWidth > maxWidth) {
 				mySelect_showDom.width(mySelect_showWidth);
 			} else {
 				mySelect_showDom.width(maxWidth);
 			}
 		if($(this).data('optionShow')){
-			if(mySelect_showWidth > showDomWidth || maxWidth > showDomWidth){
-				mySelect_showDom.width(showDomWidth - 48);
+			if(maxWidth > showDomWidth + 1){
+				mySelect_showDom.width(showDomWidth);
+				liDom.parents('.mySelect_listDown').width(maxWidth + 32);
+			}else{
+				liDom.parents('.mySelect_listDown').width(mySelect_showDom.parents('.mySelect_show').outerWidth());
 			}
-			liDom.parents('.mySelect_listDown').width(maxWidth + 32);
 		}else{
 			liDom.parents('.mySelect_listDown').width(mySelect_showDom.parents('.mySelect_show').outerWidth());
 		}
