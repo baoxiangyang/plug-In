@@ -28,120 +28,119 @@
 		init: function (num, optionShow) { //初始函数
 			var number = num || 0;
 			$(this).each(function () {
-				if($(this).data('init') == 'true'){ //阻止多次初始
-					return false;
-				}
-				$(this).data('init', 'true');
-				$(this).data('optionShow', optionShow);
-				$(this).data('number', num || 0);
-				$(this).mySelect('reset');
-				setWidth.call($(this));
-				//设置下拉高度
-				if (number && $(this).find('li').length > number) {
-					$(this).find('.mySelect_listDown').height(number * height);
-					setPullHeight.call($(this));
-				} else {
-					$(this).find('.mySelect_listDown').height($(this).find('li').length * height);
-				}
-				//点击select
-				$(this).on('click', '.mySelect_show', function (event) {
-					var self = $(this).parents('.mySelect'), listDown = self.find('.mySelect_listDown'),
-						number = self.data('number');
-					if (self.hasClass('myDisabled')) {
-						return false;
+				if($(this).data('init') != 'true'){ //阻止多次初始	
+					$(this).data('init', 'true');
+					$(this).data('optionShow', optionShow);
+					$(this).data('number', num || 0);
+					$(this).mySelect('reset');
+					setWidth.call($(this));
+					//设置下拉高度
+					if (number && $(this).find('li').length > number) {
+						$(this).find('.mySelect_listDown').height(number * height);
+						setPullHeight.call($(this));
+					} else {
+						$(this).find('.mySelect_listDown').height($(this).find('li').length * height);
 					}
-					if (listDown.css('display') == 'none') {
-						setDown(self, 0);
-						//点击展开时先隐藏其他mySelect
-						$('.mySelect').each(function () {
-							showOrHide($(this), null, 'hide');
-						});
-						showOrHide($(this).parents('.mySelect'), event, 'show');
-						//判断是否显示侧下拉条
-						if (number && self.find('li').length > number) {
-							self.find('.pull-down').css('display', 'block');
+					//点击select
+					$(this).on('click', '.mySelect_show', function (event) {
+						var self = $(this).parents('.mySelect'), listDown = self.find('.mySelect_listDown'),
+							number = self.data('number');
+						if (self.hasClass('myDisabled')) {
+							return false;
+						}
+						if (listDown.css('display') == 'none') {
+							setDown(self, 0);
+							//点击展开时先隐藏其他mySelect
+							$('.mySelect').each(function () {
+								showOrHide($(this), null, 'hide');
+							});
+							showOrHide($(this).parents('.mySelect'), event, 'show');
+							//判断是否显示侧下拉条
+							if (number && self.find('li').length > number) {
+								self.find('.pull-down').css('display', 'block');
+							} else {
+								self.find('.pull-down').css('display', 'none');
+							}
 						} else {
-							self.find('.pull-down').css('display', 'none');
+							showOrHide($(this).parents('.mySelect'), event, 'hide');
 						}
-					} else {
-						showOrHide($(this).parents('.mySelect'), event, 'hide');
-					}
-					// event.stopPropagation();
-					// return false;
-				});
-				//点击下拉框
-				$(this).on('click', 'li', function (event) {
-					if($(this).hasClass('myDisabled')){
-						return false;
-					}
-					var mySelect_showDom = $(this).parents('.mySelect').find('p');
-					showOrHide($(this).parents('.mySelect'), null, 'hide');
-					if (!($(this).data('value') == mySelect_showDom.data('value') && $(this).text() == mySelect_showDom.text())) {
-						mySelect_showDom.data('value', $(this).data('value'));
-						mySelect_showDom.text($(this).text());
-						$(this).parents('.mySelect').trigger("change");
-					}
-					event.stopPropagation();
-				});
-				//下拉条滚动事件
-				$(this).on('mousewheel DOMMouseScroll', '.mySelect_listDown', function (event) {
-					var wheel = 0;
-					if (event.originalEvent.wheelDelta) {
-						wheel = -event.originalEvent.wheelDelta / speed;
-					} else {
-						wheel = event.originalEvent.detail || event.originalEvent.deltaY * 3;
-						console.log(wheel);
-					}
-					var scrollbars = $(this).parents('.mySelect').find('.pull-down'),
-						downHight = $(this).height() - scrollbars.height(),
-						num = scrollbars.position().top + wheel;
-					if (scrollbars.css('display') == 'none') {
-						return false;
-					}
-					if (wheel < 0) {
-						if (num < 0) {
-							num = 0;
+						// event.stopPropagation();
+						// return false;
+					});
+					//点击下拉框
+					$(this).on('click', 'li', function (event) {
+						if($(this).hasClass('myDisabled')){
+							return false;
 						}
-					} else {
-						if (num > downHight) {
-							num = downHight;
+						var mySelect_showDom = $(this).parents('.mySelect').find('p');
+						showOrHide($(this).parents('.mySelect'), null, 'hide');
+						if (!($(this).data('value') == mySelect_showDom.data('value') && $(this).text() == mySelect_showDom.text())) {
+							mySelect_showDom.data('value', $(this).data('value'));
+							mySelect_showDom.text($(this).text());
+							$(this).parents('.mySelect').trigger("change");
 						}
-					}
-					setDown($(this).parents('.mySelect'), num);
-					event.stopPropagation();
-					return false;
-				});
-				//下拉条鼠标按下
-				$(this).on('mousedown', '.pull-down', function (event) {
-					if ($(this).css('display') == 'none') {
-						return false;
-					}
-					var self = $(this).parents('.mySelect'),
-						downHight = self.find('.mySelect_listDown').height() - self.find('.pull-down').height(),
-						downTop = event.clientY - $(this).position().top;
-					//下拉条鼠标移动
-					$(document).on('mousemove', function (event) {
-							var num = event.clientY - downTop;
-							if (num <= 0) {
+						event.stopPropagation();
+					});
+					//下拉条滚动事件
+					$(this).on('mousewheel DOMMouseScroll', '.mySelect_listDown', function (event) {
+						var wheel = 0;
+						if (event.originalEvent.wheelDelta) {
+							wheel = -event.originalEvent.wheelDelta / speed;
+						} else {
+							wheel = event.originalEvent.detail || event.originalEvent.deltaY * 3;
+							console.log(wheel);
+						}
+						var scrollbars = $(this).parents('.mySelect').find('.pull-down'),
+							downHight = $(this).height() - scrollbars.height(),
+							num = scrollbars.position().top + wheel;
+						if (scrollbars.css('display') == 'none') {
+							return false;
+						}
+						if (wheel < 0) {
+							if (num < 0) {
 								num = 0;
 							}
-							if (num >= downHight) {
+						} else {
+							if (num > downHight) {
 								num = downHight;
 							}
-							//$(this).find('.pull-down').css('top', num);
-							setDown(self, num);
+						}
+						setDown($(this).parents('.mySelect'), num);
 						event.stopPropagation();
 						return false;
 					});
-					//下拉条鼠标抬起
-					$(document).on('mouseup', function (event) {
-						$(this).off('mousemove mouseup');
+					//下拉条鼠标按下
+					$(this).on('mousedown', '.pull-down', function (event) {
+						if ($(this).css('display') == 'none') {
+							return false;
+						}
+						var self = $(this).parents('.mySelect'),
+							downHight = self.find('.mySelect_listDown').height() - self.find('.pull-down').height(),
+							downTop = event.clientY - $(this).position().top;
+						//下拉条鼠标移动
+						$(document).on('mousemove', function (event) {
+								var num = event.clientY - downTop;
+								if (num <= 0) {
+									num = 0;
+								}
+								if (num >= downHight) {
+									num = downHight;
+								}
+								//$(this).find('.pull-down').css('top', num);
+								setDown(self, num);
+							event.stopPropagation();
+							return false;
+						});
+						//下拉条鼠标抬起
+						$(document).on('mouseup', function (event) {
+							$(this).off('mousemove mouseup');
+							event.stopPropagation();
+							return false;
+						});
 						event.stopPropagation();
 						return false;
 					});
-					event.stopPropagation();
-					return false;
-				});
+				}
 			});
 			return $(this);
 		},
