@@ -9,4 +9,4 @@ myScrollBar 自定义滚动条工具 简单实用 <br/>
 炫酷loading 一个不错的加载中动画<br>
 sublime-nodejs-enhance.js 是一个sublime-node 按键增强配置文件
 用法：
-	<img src="./sublime.jpg" alt="">
+	<img src="./sublime.png" alt="">
